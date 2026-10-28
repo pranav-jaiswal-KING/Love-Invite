@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,700&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b0410;--plum:#2a0a3d;--violet:#8b3dff;--red:#ff2d55;--pink:#ff7ab8;--blush:#ffe3ee;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;color:var(--blush);font:400 1.05rem/1.6 Manrope,system-ui,sans-serif;background:radial-gradient(60rem 40rem at 12% 8%,#3d0a55 0,transparent 60%),radial-gradient(50rem 40rem at 92% 92%,#5c0a2c 0,transparent 60%),var(--ink)}
+body:not(.open){overflow:hidden}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.stage{min-height:100vh;display:grid;place-content:center;justify-items:center;text-align:center;padding:2rem 1.2rem;position:relative;z-index:1;animation:fade 1.2s both}
+#gate{position:fixed;inset:0;z-index:10;transition:opacity .8s;min-height:0}
+#gate.out{opacity:0;pointer-events:none}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+h1,h2{font-family:Fraunces,Georgia,serif;margin:0}
+h1{font-style:italic;font-weight:700;font-size:clamp(2.4rem,9vw,5.6rem);line-height:1.08;padding-bottom:.1em;max-width:16ch;margin:.2em auto .5em;background:linear-gradient(100deg,var(--pink),var(--red) 55%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-weight:600;font-size:clamp(1.8rem,5vw,2.7rem);margin-bottom:.4em}
+.sub{color:var(--pink);font-size:1.15rem;margin:0}
+.btns{display:flex;gap:1.2rem;justify-content:center;align-items:center;min-height:5rem}
+.btn{font:600 1.2rem Manrope,sans-serif;padding:.9rem 2.4rem;border-radius:999px;border:2px solid transparent;cursor:pointer;color:#fff}
+.yes{background:linear-gradient(120deg,var(--red),var(--pink));animation:glow 1.8s infinite;scale:var(--s,1);transition:scale .3s}
+@keyframes glow{0%{box-shadow:0 0 0 0 rgba(255,45,85,.6)}70%,100%{box-shadow:0 0 0 20px rgba(255,45,85,0)}}
+.no{background:rgba(139,61,255,.12);border-color:var(--violet);color:#dcc0ff;transition:left .35s cubic-bezier(.3,1.5,.5,1),top .35s cubic-bezier(.3,1.5,.5,1)}
+.btn:focus-visible,.card:focus-visible,#sl:focus-visible{outline:3px solid var(--pink);outline-offset:4px}
+.taunt{min-height:1.7em;color:var(--pink);margin:.6rem 0 0}
+.wrap{max-width:46rem;margin:0 auto;padding:5rem 1.2rem;position:relative;z-index:1;text-align:center}
+#more.show{animation:fade 1s both}
+.pair{--k:0;display:flex;justify-content:center;height:100px;margin:2rem 0 1rem}
+.pair svg{width:96px;height:90px;margin:0 -8px}
+.pair .a{fill:var(--red);transform:translateX(calc((1 - var(--k)) * -130px)) rotate(calc((1 - var(--k)) * -14deg));filter:drop-shadow(0 0 14px #ff2d55aa)}
+.pair .b{fill:var(--violet);transform:translateX(calc((1 - var(--k)) * 130px)) rotate(calc((1 - var(--k)) * 14deg));filter:drop-shadow(0 0 14px #8b3dffaa)}
+.pair.done svg{animation:beat .8s infinite}
+@keyframes beat{50%{transform:scale(1.2)}}
+#sl{width:min(22rem,90%);accent-color:var(--pink);margin:1rem 0}
+#cap{min-height:1.8em;color:var(--pink);margin:0}
+.tiles{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.4rem}
+.tile{min-width:5.4rem;padding:1rem .6rem;border-radius:18px;background:rgba(139,61,255,.15);border:1px solid rgba(255,122,184,.3)}
+.tile b{display:block;font:700 2rem Fraunces,serif;color:#fff;font-variant-numeric:tabular-nums}
+.tile span{font-size:.85rem;color:var(--pink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:1rem;margin-top:1.6rem}
+.card{perspective:800px;height:180px;background:none;border:0;padding:0;cursor:pointer;color:inherit;font:inherit}
+.in{position:relative;width:100%;height:100%;transition:transform .7s;transform-style:preserve-3d}
+.card.f .in{transform:rotateY(180deg)}
+.fa,.fb{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;display:grid;place-items:center;padding:1rem;text-align:center}
+.fa{background:linear-gradient(150deg,#4a1480,#1c0630);border:1px solid rgba(199,125,255,.5);font-size:2.6rem;color:var(--pink)}
+.fb{transform:rotateY(180deg);background:linear-gradient(150deg,#b3123f,#4d0a3a);font:italic 400 1.05rem/1.4 Fraunces,Georgia,serif}
+.letter{text-align:left;white-space:pre-wrap;min-height:25rem;margin-top:1.4rem;padding:1.6rem;border-radius:24px;background:rgba(0,0,0,.5);border:1px solid rgba(255,122,184,.3);font:italic 400 1.2rem/1.8 Fraunces,Georgia,serif;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.chips{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin:1.2rem 0}
+.chip{font:600 1rem Manrope,sans-serif;padding:.7rem 1.2rem;border-radius:999px;cursor:pointer;color:var(--blush);background:rgba(139,61,255,.15);border:1px solid rgba(199,125,255,.5);transition:background .25s,border-color .25s}
+.chip.on{background:linear-gradient(120deg,var(--red),var(--pink));border-color:transparent;color:#fff}
+.chip:focus-visible,.coupon:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+.msg{min-height:3.4em;color:var(--pink);font:italic 400 1.2rem/1.5 Fraunces,Georgia,serif;margin:1rem 0}
+#dt{font:inherit;padding:.7rem 1rem;border-radius:14px;border:1px solid rgba(199,125,255,.5);background:rgba(0,0,0,.45);color:var(--blush);color-scheme:dark;margin-bottom:.6rem}
+.coupon{position:relative;min-height:110px;padding:1.1rem 1rem;border-radius:18px;border:2px dashed var(--pink);background:rgba(255,45,85,.1);cursor:pointer;color:var(--blush);font:600 1rem/1.35 Manrope,sans-serif}
+.coupon.used{opacity:.6;border-color:var(--violet);background:rgba(139,61,255,.14)}
+.coupon.used::after{content:"Redeemed";position:absolute;right:10px;bottom:8px;color:var(--pink);font:italic 700 .95rem Fraunces,serif;transform:rotate(-8deg)}
+.deck{margin:1.4rem auto;max-width:26rem;min-height:11rem;padding:1.6rem;border-radius:24px;display:grid;place-items:center;background:linear-gradient(150deg,#b3123f,#3a0a5c);font:italic 400 1.3rem/1.45 Fraunces,Georgia,serif}
+.end h1{max-width:12ch}
+.link{background:none;border:0;color:#cfa8ff;text-decoration:underline;cursor:pointer;font:inherit;margin-top:1.6rem}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<main id="gate" class="stage">
+  <p class="sub">Before you come in, one important question.</p>
+  <h1>Do you love me???????</h1>
+  <div class="btns" id="b1"><button class="btn yes" id="y1">YES!!</button><button class="btn no" id="n1">no</button></div>
+  <p class="taunt" id="t1" aria-live="polite"></p>
+</main>
+
+<div id="site" hidden>
+  <section class="stage" id="hero">
+    <p class="sub">Happy 1st anniversary, meri Jaan.</p>
+    <h1>Do you wanna cuddle with me this sunday?</h1>
+    <p>Just you and me 😏</p>
+    <div class="btns" id="b2"><button class="btn yes" id="y2">YES!!!!!</button><button class="btn no" id="n2">No</button></div>
+    <p class="taunt" id="t2" aria-live="polite"></p>
+  </section>
+
+  <div id="more" hidden>
+    <section class="wrap" id="cuddle">
+      <h2>Come closer</h2>
+      <p>Slide until we’re together.</p>
+      <div class="pair" id="pair">
+        <svg class="a" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 28C-9 11 5-5 16 6c11-11 25 5 0 22z"/></svg>
+        <svg class="b" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 28C-9 11 5-5 16 6c11-11 25 5 0 22z"/></svg>
+      </div>
+      <input id="sl" type="range" min="0" max="100" value="0" aria-label="Cuddle closer">
+      <p id="cap">Come closer…</p>
+    </section>
+
+    <section class="wrap">
+      <h2>One year of us</h2>
+      <p>Married since 26 October 2025, and counting every second.</p>
+      <div class="tiles">
+        <div class="tile"><b id="cd">0</b><span>days</span></div>
+        <div class="tile"><b id="ch">00</b><span>hours</span></div>
+        <div class="tile"><b id="cm">00</b><span>minutes</span></div>
+        <div class="tile"><b id="cs">00</b><span>seconds</span></div>
+      </div>
+      <p id="yr" style="margin-top:1.2rem;color:var(--pink)"></p>
+    </section>
+
+    <section class="wrap">
+      <h2>Why I’d say yes again</h2>
+      <p>Tap a card.</p>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <section class="wrap">
+      <h2>A letter for you</h2>
+      <div class="letter" id="letter" aria-live="off"></div>
+    </section>
+
+    <section class="wrap" id="dates">
+      <h2>Date night, my treat</h2>
+      <p>Pick what sounds perfect, choose a day, and I’ll plan everything else.</p>
+      <div class="chips" id="dch"></div>
+      <input id="dt" type="date" aria-label="Date night day">
+      <p class="msg" id="dm"></p>
+      <button class="btn yes" id="dgo">Lock it in</button><br>
+      <button class="link" data-send="dm">Tell Pranav</button>
+    </section>
+
+    <section class="wrap">
+      <h2>Love coupons, no expiry</h2>
+      <p>Tap to redeem. I’ll deliver every single one.</p>
+      <div class="cards" id="cps"></div>
+      <p class="msg" id="cm2"></p>
+      <button class="link" data-send="cm2">Tell Pranav</button>
+    </section>
+
+    <section class="wrap">
+      <h2>How do you feel most loved?</h2>
+      <p>So I can get even better at loving you.</p>
+      <div class="chips" id="lch"></div>
+      <p class="msg" id="lm"></p>
+      <button class="link" data-send="lm">Tell Pranav</button>
+    </section>
+
+    <section class="wrap" id="spark">
+      <h2>Can I steal you tonight?</h2>
+      <p>Be honest. There’s no pressure, and every answer is a good answer.</p>
+      <div class="chips" id="mch"></div>
+      <p class="msg" id="mm"></p>
+      <button class="link" data-send="mm">Tell Pranav</button>
+    </section>
+
+    <section class="wrap">
+      <h2>Truth, dare or tease</h2>
+      <p>Draw a card. Skip any you don’t feel like and draw again.</p>
+      <div class="deck" id="dk">Tap the button to draw your first card.</div>
+      <button class="btn yes" id="draw">Draw a card</button>
+    </section>
+
+    <section class="stage end">
+      <h1>Happy 1st Anniversary</h1>
+      <p class="sub">Here’s to forever, and every cuddle in it.</p>
+      <div class="btns"><button class="btn yes" id="kiss">Send a kiss</button></div>
+      <p class="taunt" id="kc"></p>
+      <button class="link" onclick="location.reload()">Start again</button>
+    </section>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- floating hearts canvas ---- */
+const cv=$('#bg'),c=cv.getContext('2d');let W,H,P=[];
+const size=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight};
+addEventListener('resize',size);size();
+const cols=['#ff2d55','#ff7ab8','#8b3dff','#c77dff','#ff4d6d'];
+function heart(x,y,s){c.beginPath();c.moveTo(x,y+s*.4);c.bezierCurveTo(x-s,y-s*.2,x-s*.6,y-s,x,y-s*.4);c.bezierCurveTo(x+s*.6,y-s,x+s,y-s*.2,x,y+s*.4);c.fill()}
+function add(x,y,o){P.push(Object.assign({x,y,vx:0,vy:-rnd(.3,1),s:rnd(6,16),a:.5,c:cols[Math.random()*cols.length|0],g:0,d:0,life:1},o))}
+function burst(x,y,n=28){for(let i=0;i<n;i++){const t=rnd(0,6.28),v=rnd(2,7);add(x,y,{vx:Math.cos(t)*v,vy:Math.sin(t)*v-2,s:rnd(8,22),a:1,g:.12,d:.012})}}
+function rain(){for(let i=0;i<7;i++)setTimeout(()=>burst(rnd(W*.1,W*.9),rnd(H*.15,H*.6),32),i*170)}
+(function frame(){
+  c.clearRect(0,0,W,H);
+  if(!reduce&&Math.random()<.14)add(rnd(0,W),H+20,{s:rnd(8,26),a:rnd(.15,.45),vx:rnd(-.3,.3)});
+  P=P.filter(p=>p.life>0&&p.y>-40&&p.y<H+60);
+  for(const p of P){p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.vx*=.995;p.life-=p.d;c.globalAlpha=p.a*Math.max(p.life,0);c.fillStyle=p.c;heart(p.x,p.y,p.s)}
+  c.globalAlpha=1;requestAnimationFrame(frame);
+})();
+addEventListener('pointermove',e=>{if(!reduce&&Math.random()<.35)add(e.clientX,e.clientY,{s:rnd(5,12),a:.8,vx:rnd(-.6,.6),vy:rnd(-1.2,-.3),d:.02})});
+addEventListener('pointerdown',e=>burst(e.clientX,e.clientY,10));
+
+/* ---- the No button that runs away ---- */
+function runaway(no,yes,out,lines){
+  let n=0,sc=1,ph;
+  const go=e=>{
+    if(e.cancelable)e.preventDefault();
+    if(!ph){ph=document.createElement('span');ph.style.width=no.offsetWidth+'px';no.before(ph);no.style.position='fixed';no.style.zIndex=20}
+    const m=14,w=no.offsetWidth,h=no.offsetHeight;
+    no.style.left=rnd(m,innerWidth-w-m)+'px';
+    no.style.top=rnd(m,innerHeight-h-m)+'px';
+    sc=Math.min(sc+.1,2);yes.style.setProperty('--s',sc);
+    out.textContent=lines[n++%lines.length];
+  };
+  ['pointerenter','pointerdown','touchstart','click','focus'].forEach(ev=>no.addEventListener(ev,go,{passive:false}));
+}
+runaway($('#n1'),$('#y1'),$('#t1'),["Nope, try again.","Too slow!","That’s the wrong answer, love.","Did your finger slip?","The No button is shy.","Just press Yes already!","Even the button says Yes."]);
+runaway($('#n2'),$('#y2'),$('#t2'),["Cuddles are not optional.","Nice try.","You can’t escape a cuddle.","No is not available today.","Say yes, I’m cold.","Your arms miss me already."]);
+
+/* ---- stage 1 -> main site ---- */
+$('#y1').onclick=()=>{
+  rain();$('#gate').classList.add('out');
+  setTimeout(()=>{$('#gate').hidden=true;$('#site').hidden=false;document.body.classList.add('open');scrollTo(0,0)},850);
+};
+/* ---- stage 2 -> the rest of the site ---- */
+$('#y2').onclick=()=>{
+  rain();
+  $('#b2').innerHTML='';$('#t2').textContent='I mean just you and me and nothing else (not even the cloths)';
+  $('#more').hidden=false;$('#more').classList.add('show');
+  setTimeout(()=>$('#cuddle').scrollIntoView({behavior:'smooth'}),900);
+};
+
+/* ---- cuddle slider ---- */
+const sl=$('#sl'),pair=$('#pair'),cap=$('#cap');
+sl.oninput=()=>{
+  const k=sl.value/100;pair.style.setProperty('--k',k);
+  if(k===1){
+    if(!pair.classList.contains('done')){pair.classList.add('done');const r=pair.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,44)}
+    cap.textContent='Cuddle achieved. Best place in the world.';
+  }else{
+    pair.classList.remove('done');
+    cap.textContent=k<.34?'Come closer…':k<.67?'A little more…':'Almost there…';
+  }
+};
+
+/* ---- live counter since 26 Oct 2025 ---- */
+const T0=new Date('2025-10-26T00:00:00+05:30'),pad=n=>String(n).padStart(2,'0');
+function tick(){
+  let s=Math.max(0,Math.floor((Date.now()-T0)/1000));const d=Math.floor(s/86400);s%=86400;
+  $('#cd').textContent=d;$('#ch').textContent=pad(Math.floor(s/3600));$('#cm').textContent=pad(Math.floor(s%3600/60));$('#cs').textContent=pad(s%60);
+  const y=Math.floor(d/365),r=d-y*365;
+  $('#yr').textContent=y>=1?`That’s ${y} year${y>1?'s':''} and ${r} day${r===1?'':'s'} of loving you.`:'';
+}
+setInterval(tick,1000);tick();
+
+/* ---- reasons (edit these freely) ---- */
+const reasons=[
+ ['♥','Har din aapse thoda aur pyaar ho jaata hai, bina permission ke. 🫶'],
+ ['✦','Aap paas hoti ho toh sab kuch thoda zyada beautiful lagta hai.'],
+ ['☾','Meri favourite jagah? Aapke paas, aapki baahon mein. 🥰'],
+ ['❖','Aaj bas aap, main aur duniya se thoda sa distance chahiye. ❤️'],
+ ['✿','Ek tight hug do na, thodi der ke liye duniya bhoolni hai. 🫂'],
+ ['☀','Aapke kareeb aate hi dil ki dhadkan apni marzi chalane lagti hai. 💓'],
+ ['✧','Aapke saamne aate hi mera dimmag apne aap hill jaata hai… control hi nahi hai. 😏'],
+ ['❀','Warning: Aaj aapko bahut saara pyaar aur unlimited kisses milne wale hain. 💋']
+];
+$('#cards').innerHTML=reasons.map(r=>`<button class="card"><div class="in"><div class="fa">${r[0]}</div><div class="fb">${r[1]}</div></div></button>`).join('');
+document.querySelectorAll('.card').forEach(b=>b.onclick=e=>{b.classList.toggle('f');const r=b.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,12)});
+
+/* ---- typed love letter (edit the text freely) ---- */
+const letter=`My love,
+
+One year ago we said forever, and somehow every day since has made that word feel even bigger. Thank you for the laughs, the patience, the late-night talks, and for choosing me every single day.
+
+I don’t have a gesture big enough, so I built you this little corner of the internet instead. Every heart that follows your finger is just a small way of saying I’m yours.
+
+Happy 1st anniversary. Here’s to all the years still waiting for us.
+
+Forever yours,
+DUDU`;
+let typed=false;
+new IntersectionObserver((en,ob)=>{
+  if(typed||!en[0].isIntersecting)return;typed=true;ob.disconnect();
+  let i=0;const el=$('#letter'),t=setInterval(()=>{i+=2;el.textContent=letter.slice(0,i);if(i>=letter.length)clearInterval(t)},30);
+},{threshold:.4}).observe($('#letter'));
+
+/* ---- helpers for the new sections ---- */
+function chips(sel,items,fn){
+  const h=$(sel);
+  h.innerHTML=items.map(it=>`<button class="chip">${it[0]}</button>`).join('');
+  h.querySelectorAll('.chip').forEach((b,i)=>b.onclick=()=>{
+    h.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    const r=b.getBoundingClientRect();burst(r.left+r.width/2,r.top,10);fn(items[i]);
+  });
+}
+async function send(id){
+  const el=$('#'+id),t=el.dataset.say;
+  if(!t){el.textContent='Pick something first.';return}
+  try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(t);el.textContent='Copied. Paste it in a message to Pranav.';return}catch(e){}
+  el.textContent='Screenshot this and send it to Pranav: '+t;
+}
+document.querySelectorAll('[data-send]').forEach(b=>b.onclick=()=>send(b.dataset.send));
+
+/* date night picker */
+let pick='';
+$('#dt').min=new Date().toISOString().slice(0,10);
+chips('#dch',[['Candlelight dinner'],['Movie night in blankets'],['Something spicy, no cloths'],['Late-night drive and ice cream'],['Shopping'],['A spa evening together']],d=>{pick=d[0];$('#dm').dataset.say='';$('#dm').textContent=`${pick}. Excellent taste. Now choose a day.`});
+$('#dgo').onclick=()=>{
+  const v=$('#dt').value,m=$('#dm');
+  if(!pick||!v){m.textContent='Pick a date night and a day first.';return}
+  const day=new Date(v+'T00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+  m.textContent=`Booked: ${pick}, ${day}. Tap “Tell Pranav” so he knows.`;
+  m.dataset.say=`Yes to a date night! ${pick} on ${day}. Make it special. ❤️`;
+  rain();
+};
+
+/* love coupons */
+const cps=['A full-body massage no cloths','Breakfast in bed','A slow dance in the kitchen with unlimited kisses','A phone-free evening, just us','You pick the movie, no arguments','A candlelit bath, I’ll handle the rest','A foot rub while we watch your favourite show(Section E)','One surprise gift, delivered when you least expect it'];
+$('#cps').innerHTML=cps.map(t=>`<button class="coupon">${t}</button>`).join('');
+document.querySelectorAll('.coupon').forEach(b=>b.onclick=()=>{
+  b.classList.toggle('used');
+  const got=[...document.querySelectorAll('.coupon.used')].map(x=>x.firstChild.textContent.toLowerCase());
+  $('#cm2').textContent=got.length?`Redeemed: ${got.join(', ')}.`:'';
+  $('#cm2').dataset.say=got.length?`I’d like to redeem my love coupons: ${got.join(', ')}.`:'';
+  if(b.classList.contains('used')){const r=b.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,16)}
+});
+
+/* love languages */
+chips('#lch',[
+ ['Words of affirmation','Then expect more notes, voice messages, and a lot of “I’m so proud of you”.'],
+ ['Quality time','Then the phones go away and the evening is only yours.'],
+ ['Physical touch','Then longer hugs, held hands, and your head on my shoulder every night.'],
+ ['Little gifts','Then I’ll keep finding small things that remind me of you.'],
+ ['Acts of service','Then I’ll take more off your plate, so you get to rest.']
+],i=>{$('#lm').textContent=i[1];$('#lm').dataset.say=`I feel most loved through: ${i[0].toLowerCase()}.`});
+
+/* tonight's mood: gentle, and a graceful no is always an option */
+chips('#mch',[
+ ['Cozy cuddles','Blankets, a movie, and you in my arms. Done.','Tonight I want cozy cuddles.'],
+ ['Slow and romantic','Then I’ll dim the lights, put on our playlist, and we will be cuddling each other','Tonight I’d love something slow and romantic.'],
+ ['Playful and flirty','Careful. I’ve been waiting all day to tease you back.','Tonight I’m feeling playful and flirty.'],
+ ['Passionate','Then clear your evening. Tonight I’m all yours, no cloths just you and me','Tonight I’m in a passionate mood.'],
+ ['A massage, then sleep','Then I’ll warm the oil, you pick the music, and I’ll melt away your whole week.','Tonight I’d love a massage and an early sleep.'],
+ ['Not tonight','Totally okay. I love you just the same. We’ll do a blanket night, or tomorrow.','Not tonight, but I love you.']
+],i=>{$('#mm').textContent=i[1];$('#mm').dataset.say=i[2]});
+
+/* truth, dare or tease deck */
+const deck=['Truth: What was the first thing you noticed about me when i was totally naked?','Truth: Which of my kisses is your favourite?','Truth: Do you like fingers or my tounge more','Truth: What’s that position you’d love for us to try together?','Dare: Give me a slow and passionate kiss.','Dare: Whisper one thing you’re looking forward to do while having sex.','Dare: Hig me tightly','Dare: One long, slow kiss. No rushing.','Tease: Tell me what I do while having sex that drives you a little bit crazy.','Dare: Look into my eyes and tell me three things you love about me.'];
+let bag=[];
+$('#draw').onclick=()=>{
+  if(!bag.length)bag=[...deck].sort(()=>Math.random()-.5);
+  const d=$('#dk');d.textContent=bag.pop();
+  const r=d.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,14);
+};
+
+/* ---- finale ---- */
+let kisses=0;
+$('#kiss').onclick=e=>{kisses++;$('#kc').textContent=`Kisses sent: ${kisses}`;const r=e.currentTarget.getBoundingClientRect();burst(r.left+r.width/2,r.top,30)};
+</script>
+</body>
+</html>
